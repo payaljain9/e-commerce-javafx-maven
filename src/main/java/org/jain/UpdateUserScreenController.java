@@ -13,34 +13,33 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class AddUserScreenController {
-	@FXML
-	TextField usernametxt;
-	
+public class UpdateUserScreenController {
 	@FXML
 	TextField useridtxt;
 	
 	@FXML
-	TextField passwordtxt;
+	TextField usernametxt;
 	
 	@FXML
 	TextField emailtxt;
 	
 	@FXML
-	Button addbtn;
+	TextField passwordtxt;
+	
+	@FXML
+	Button savebtn;
 	
 	@FXML
 	Button resetbtn;
 	
 	public void resetbtnClick()
 	{
-		usernametxt.setText("");
-		passwordtxt.setText("");
 		useridtxt.setText("");
+		usernametxt.setText("");
 		emailtxt.setText("");
+		passwordtxt.setText("");
 	}
-	
-	public void addbtnClick() throws Exception
+	public void savebtnClick() throws Exception
 	{
 		//establishing connection with db
 		Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/managment","root","Payal@j9067");
@@ -51,15 +50,24 @@ public class AddUserScreenController {
 		
 		String username=usernametxt.getText();
 		String password=passwordtxt.getText();
-		int userid=Integer.parseInt(useridtxt.getText());
 		String email=emailtxt.getText();
+		int id=Integer.parseInt(useridtxt.getText());
+		resultset=stmt.executeQuery("select name, password, email from user where id="+id+"");
 		
-		stmt.executeUpdate("insert into user values("+userid+",'"+username+"','"+password+"','"+email+"')");
+		if(resultset.next())
+		{
+			stmt.executeUpdate("update user set name='"+username+"', password='"+password+"', email='"+email+"' where id="+id+"");
+			System.out.println("User Details Updated Successfully..!");
+		}
+		else
+		{
+			System.out.println(username+" User With ID "+id+" Does Not Exists..!");
+		}
 		
-		System.out.println("New User Added Successfully..!");
-		usernametxt.setText("");
-		passwordtxt.setText("");
 		useridtxt.setText("");
+		usernametxt.setText("");
 		emailtxt.setText("");
+		passwordtxt.setText("");
 	}
+	
 }

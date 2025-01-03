@@ -13,34 +13,22 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class AddUserScreenController {
-	@FXML
-	TextField usernametxt;
-	
+public class DeleteUserScreenController {
 	@FXML
 	TextField useridtxt;
 	
 	@FXML
-	TextField passwordtxt;
-	
-	@FXML
-	TextField emailtxt;
-	
-	@FXML
-	Button addbtn;
+	Button deletebtn;
 	
 	@FXML
 	Button resetbtn;
 	
 	public void resetbtnClick()
 	{
-		usernametxt.setText("");
-		passwordtxt.setText("");
 		useridtxt.setText("");
-		emailtxt.setText("");
 	}
 	
-	public void addbtnClick() throws Exception
+	public void deletebtnClick() throws Exception
 	{
 		//establishing connection with db
 		Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/managment","root","Payal@j9067");
@@ -48,18 +36,22 @@ public class AddUserScreenController {
 		Statement stmt=con.createStatement();
 		//resultset to store fetched records(reference variable)
 		ResultSet resultset;
-		
-		String username=usernametxt.getText();
-		String password=passwordtxt.getText();
+				
 		int userid=Integer.parseInt(useridtxt.getText());
-		String email=emailtxt.getText();
 		
-		stmt.executeUpdate("insert into user values("+userid+",'"+username+"','"+password+"','"+email+"')");
-		
-		System.out.println("New User Added Successfully..!");
-		usernametxt.setText("");
-		passwordtxt.setText("");
-		useridtxt.setText("");
-		emailtxt.setText("");
+	    resultset=stmt.executeQuery("select * from user where id="+userid+"");
+	    
+	    if(resultset.next())
+	    {
+	    	stmt.executeUpdate("delete from user where id="+userid+"");
+	    	System.out.println("User Details Deleted Successfully..!");
+	    	useridtxt.setText("");
+	    }
+	    else
+	    {
+	    	System.out.println("User With "+userid+" UserID Does Not Exists..!");
+	    	useridtxt.setText("");
+	    }
+				
 	}
 }
